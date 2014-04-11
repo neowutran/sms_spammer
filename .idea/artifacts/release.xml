@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="apk" build-on-make="true" name="release">
+    <output-path>$PROJECT_DIR$/build/classes/artifacts/release</output-path>
+    <properties id="android-properties">
+      <options>
+        <option name="keyStoreUrl" value="file://" />
+      </options>
+    </properties>
+    <root id="archive" name="release.apk">
+      <element id="android-final-package" facet="SmsSpammer-SmsSpammer/android/Android" />
+    </root>
+  </artifact>
+</component>

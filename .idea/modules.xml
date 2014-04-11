@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/sms_spammer.iml" filepath="$PROJECT_DIR$/sms_spammer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sms_spammer/sms_spammer-sms_spammer.iml" filepath="$PROJECT_DIR$/sms_spammer/sms_spammer-sms_spammer.iml" />
+    </modules>
+  </component>
+</project>
+
