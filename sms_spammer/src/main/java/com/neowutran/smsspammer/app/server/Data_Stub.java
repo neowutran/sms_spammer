@@ -9,9 +9,9 @@ import java.util.Map;
  */
 public class Data_Stub {
 
-    public static Map getSms(){
+    public static Map getSms() {
         String json = "{\"recipient\":\"0622666200\", \"message\":\"Coucou\", \"id\": \"1\"}";
-      //  Gson gson = new Gson();
+        //  Gson gson = new Gson();
         Gson gson = new Gson();
         return gson.fromJson(json, Map.class);
 

@@ -12,6 +12,9 @@ public class SentListener extends BroadcastReceiver {
 
     private static SentListener sentListener = null;
 
+    private SentListener() {
+    }
+
     public static SentListener getInstance() {
 
         if (sentListener == null) {
@@ -19,9 +22,6 @@ public class SentListener extends BroadcastReceiver {
         }
         return sentListener;
     }
-
-    private SentListener(){}
-
 
     @Override
     public void onReceive(Context context, Intent intent) {

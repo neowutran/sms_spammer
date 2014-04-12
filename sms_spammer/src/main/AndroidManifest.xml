@@ -17,8 +17,6 @@
         <service
                 android:name="com.neowutran.smsspammer.app.Daemon"
                 android:label="SMS Daemon"
-                android:process=":sms_daemon"
-                android:icon="@drawable/ic_launcher"
                 >
         </service>
 

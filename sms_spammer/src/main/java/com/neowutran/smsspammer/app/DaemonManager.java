@@ -1,32 +1,52 @@
 package com.neowutran.smsspammer.app;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.ToggleButton;
 
 
 public class DaemonManager extends Activity {
 
+    private static Daemon daemon;
+
+    private static ServiceConnection daemonConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className,
+                                       IBinder binder) {
+            Daemon.DaemonBinder bind = (Daemon.DaemonBinder) binder;
+            daemon = bind.getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            daemon = null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bindService(new Intent(this, Daemon.class), daemonConnection, BIND_AUTO_CREATE);
         setContentView(R.layout.activity_daemon_manager);
-        Switch toggle = (Switch) findViewById(R.id.switch1);
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
+        toggle.setChecked(Daemon.getRunning());
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    getApplicationContext().startService(new Intent(getApplicationContext(), Daemon.class));
-                    // The toggle is enabled
-                } else {
-                    getApplicationContext().stopService(new Intent(getApplicationContext(), Daemon.class));
-                    // The toggle is disabled
-                }
+                Daemon.setRunning(isChecked);
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        unbindService(daemonConnection);
+        super.onDestroy();
     }
 
     @Override

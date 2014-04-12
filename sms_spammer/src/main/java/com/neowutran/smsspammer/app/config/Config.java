@@ -13,12 +13,19 @@ public class Config {
     public static final String LOGGER = "neowutran.smsspammer";
     private static final String ERR_LOAD_CONFIG = "Unable to load the config file";
     private static final String CONFIG = "config.properties";
+    private static Properties properties = null;
+
+    private Config() {
+
+
+    }
 
     public static Properties getProperties() {
         return properties;
     }
 
-    public static void setProperties(Context context){
+    public static void setProperties(Context context) {
+
         try {
             AssetManager assetManager = context.getAssets();
             InputStream inputStream = assetManager.open(CONFIG);
@@ -27,14 +34,6 @@ public class Config {
         } catch (IOException e) {
             Log.e(LOGGER, ERR_LOAD_CONFIG);
         }
-
-    }
-
-    private static Properties properties = null;
-
-    private Config(){
-
-
 
     }
 }
