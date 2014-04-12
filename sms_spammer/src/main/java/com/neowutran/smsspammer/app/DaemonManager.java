@@ -1,50 +1,85 @@
 package com.neowutran.smsspammer.app;
 
 import android.app.Activity;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.view.View;
+import android.widget.*;
 import com.neowutran.smsspammer.app.config.Config;
 
 
 public class DaemonManager extends Activity {
 
-    private static Daemon daemon;
+    public static Boolean getIsRunning() {
+        return isRunning;
+    }
+
+    private static Boolean isRunning = false;
+
+    public static void setStatusWaiting(final String statusWaiting) {
+        DaemonManager.statusWaiting = statusWaiting;
+    }
+
+    private static String statusWaiting = null;
+    private static Daemon.DaemonBinder daemonBinder;
+
+    public static DaemonManager getInstance() {
+        return instance;
+    }
+
+    private static DaemonManager instance;
 
     private static ServiceConnection daemonConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className,
                                        IBinder binder) {
             Daemon.DaemonBinder bind = (Daemon.DaemonBinder) binder;
-            daemon = bind.getService();
+            daemonBinder = bind;
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            daemon = null;
+            daemonBinder = null;
         }
     };
 
     @Override
     protected void onStart(){
+        super.onStart();
+        isRunning = true;
+        instance = this;
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         toggle.setChecked(Daemon.getRunning());
+        updateStatus();
+    }
+
+    private void updateStatus(){
+        if(statusWaiting != null) {
+            ((TextView) findViewById(R.id.connectionStatus)).setText(statusWaiting);
+            statusWaiting = null;
+        }
+    }
+
+    private void restartDaemon(){
+        daemonBinder.killDaemon();
+        startService(new Intent(this, Daemon.class));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isRunning = true;
+        instance = this;
         bindService(new Intent(this, Daemon.class), daemonConnection, BIND_AUTO_CREATE);
         setContentView(R.layout.activity_daemon_manager);
         Config.setProperties(this);
-
+updateStatus();
 
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -53,9 +88,19 @@ public class DaemonManager extends Activity {
             }
         });
 
-        EditText apiUrl = (EditText)findViewById(R.id.editText);
-        apiUrl.setText(Config.getAPIUrl());
-        apiUrl.addTextChangedListener(new TextWatcher() {
+        Button button = (Button) findViewById(R.id.updateNow);
+        button.setOnClickListener(new CompoundButton.OnClickListener(){
+            @Override
+            public void onClick(final View view) {
+                daemonBinder.checkSms();
+            }
+        });
+
+        final EditText updateInterval = (EditText)findViewById(R.id.updateInterval);
+        updateInterval.setText(Config.getMinuteBetweenCheck());
+        updateInterval.addTextChangedListener(new TextWatcher() {
+
+            private String text = updateInterval.getText().toString();
 
             @Override
             public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
@@ -69,14 +114,55 @@ public class DaemonManager extends Activity {
 
             @Override
             public void afterTextChanged(final Editable editable) {
-                Config.setAPIUrl(editable.toString());
+                if(!editable.toString().equals(text)) {
+
+                    Config.setMinuteBetweenCheck(editable.toString());
+                    restartDaemon();
+                    text = editable.toString();
+                }
+            }
+        });
+
+        final EditText apiUrl = (EditText)findViewById(R.id.editText);
+        apiUrl.setText(Config.getAPIUrl());
+        apiUrl.addTextChangedListener(new TextWatcher() {
+
+            private String text = apiUrl.getText().toString();
+
+            @Override
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable editable) {
+                if(!editable.toString().equals(text)) {
+                    TextView status = (TextView)findViewById(R.id.connectionStatus);
+                    status.setText((String)Config.getProperties().get("pending"));
+                    Config.setAPIUrl(editable.toString());
+                    text = editable.toString();
+                }
             }
         });
 
     }
 
     @Override
+    public void onStop(){
+        isRunning = false;
+        instance = null;
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy() {
+        isRunning = false;
+        instance = null;
         unbindService(daemonConnection);
         super.onDestroy();
     }
@@ -98,16 +184,5 @@ public class DaemonManager extends Activity {
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    public class UIReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            Bundle extras = intent.getExtras();
-            if(extras != null){
-                String status = (String)extras.get("status");
-                ((TextView)findViewById(R.id.connectionStatus)).setText(status);
-            }
-        }
-    }
 
 }

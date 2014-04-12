@@ -47,7 +47,21 @@ public class Config {
         editor.commit();
     }
 
-    public static String getAPIUrl(){
+    public static String getAPIUrl()
+    {
         return preferences.getString("api_url", (String)properties.get("api_url"));
     }
+
+    public static String getMinuteBetweenCheck(){
+        return preferences.getString("minute_between_check", (String)properties.get("minute_between_check"));
+    }
+
+
+    public static void setMinuteBetweenCheck(String minuteBetweenCheck){
+        Logger.debug(Config.LOGGER, "new update check: "+minuteBetweenCheck);
+        editor.putString("minute_between_check", minuteBetweenCheck);
+        editor.commit();
+    }
+
+
 }

@@ -31,7 +31,7 @@
 
 
 
-        <receiver android:name="com.neowutran.smsspammer.app.DaemonManager$UIReceiver" >
+        <receiver android:name="com.neowutran.smsspammer.app.UIReceiver" android:exported="false" >
             <intent-filter>
                 <action android:name="com.neowutran.smsspammer.app.Daemon" />
             </intent-filter>

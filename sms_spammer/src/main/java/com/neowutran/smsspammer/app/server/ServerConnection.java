@@ -22,7 +22,7 @@ import java.util.Scanner;
 /**
  * Created by draragar on 4/12/14.
  */
-public class ServerConnexion extends Thread{
+public class ServerConnection extends Thread{
 
     public List<Map> getListSms() {
         return listSms;
@@ -33,7 +33,7 @@ public class ServerConnexion extends Thread{
     }
 
     public void setStatus(final String status) {
-        ServerConnexion.status = status;
+        ServerConnection.status = status;
     }
 
     private static String status;
@@ -78,8 +78,8 @@ public class ServerConnexion extends Thread{
             }
 
         } catch (IOException e) {
-            Logger.error(Config.LOGGER, "wrong url:" + e.getMessage());
             status = Config.getProperties().getProperty("cannot_connect");
+            Logger.error(Config.LOGGER, "wrong url:" + e.getMessage());
             return;
         }
 

@@ -10,7 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.SmsManager;
 import com.neowutran.smsspammer.app.config.Config;
-import com.neowutran.smsspammer.app.server.ServerConnexion;
+import com.neowutran.smsspammer.app.server.ServerConnection;
 import com.neowutran.smsspammer.app.sms.DeliveryListener;
 import com.neowutran.smsspammer.app.sms.SentListener;
 
@@ -43,46 +43,50 @@ public class Daemon extends Service {
         PendingIntent pintent = PendingIntent.getService(this, 0, intentService, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         // Start every 60 seconds
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60 * 1000, pintent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60 * 1000 * Integer.valueOf(Config.getMinuteBetweenCheck()), pintent);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (running) {
-            ServerConnexion readSms =  new ServerConnexion();
-
-            readSms.start();
-
-            try {
-                readSms.join();
-            } catch (InterruptedException e) {
-                Logger.error(Config.LOGGER, e.getMessage());
-            }
-
-            if(readSms.getListSms() != null) {
-                for (Map sms : readSms.getListSms()) {
-                    String recipient;
-                    String message;
-                    String id;
-                    try {
-                        recipient = (String) sms.get("recipient");
-                        message = (String) sms.get("message");
-                        id = (String) sms.get("id");
-                    }catch(RuntimeException e){
-                        readSms.setStatus(Config.getProperties().getProperty("wrong_data"));
-                        return Service.START_NOT_STICKY;
-                    }
-
-                    sendSMS(recipient, message, id);
-                }
-            }
-
-            Intent uiIntent = new Intent(this, DaemonManager.UIReceiver.class);
-            uiIntent.putExtra("status", readSms.getStatus());
-            this.startService(uiIntent);
-
+            checkSMS();
         }
         return Service.START_NOT_STICKY;
+    }
+
+    private void checkSMS(){
+        ServerConnection readSms =  new ServerConnection();
+
+        readSms.start();
+
+        try {
+            readSms.join();
+        } catch (InterruptedException e) {
+            Logger.error(Config.LOGGER, e.getMessage());
+        }
+
+        if(readSms.getListSms() != null) {
+            for (Map sms : readSms.getListSms()) {
+                String recipient;
+                String message;
+                String id;
+                try {
+                    recipient = (String) sms.get("recipient");
+                    message = (String) sms.get("message");
+                    id = (String) sms.get("id");
+                }catch(RuntimeException e){
+                    readSms.setStatus(Config.getProperties().getProperty("wrong_data"));
+                    return;
+                }
+
+                sendSMS(recipient, message, id);
+            }
+        }
+
+        Intent notificationIntent=new Intent();
+        notificationIntent.setAction("com.neowutran.smsspammer.app.Daemon");
+        notificationIntent.putExtra("status", readSms.getStatus());
+        this.sendBroadcast(notificationIntent);
     }
 
     private void sendSMS(String recipient, String message, String id) {
@@ -118,6 +122,14 @@ public class Daemon extends Service {
     public class DaemonBinder extends Binder {
         public Daemon getService() {
             return Daemon.this;
+        }
+
+        public void killDaemon(){
+            Daemon.this.stopSelf();
+        }
+
+        public void checkSms(){
+            Daemon.this.checkSMS();
         }
     }
 
