@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsManager;
-import android.util.Log;
+import com.neowutran.smsspammer.app.Logger;
 import com.neowutran.smsspammer.app.config.Config;
 
 public class SentListener extends BroadcastReceiver {
@@ -27,26 +27,26 @@ public class SentListener extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         switch (getResultCode()) {
             case Activity.RESULT_OK:
-                Log.i(Config.getProperties().getProperty("logger"), "SMS send successfully");
+                Logger.debug(Config.getProperties().getProperty("logger"), "SMS send successfully");
                 //DO NOTHING
                 break;
             case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                Log.e(Config.getProperties().getProperty("logger"), "SMS Sending Error :Generic failure");
+                Logger.error(Config.getProperties().getProperty("logger"), "SMS Sending Error :Generic failure");
                 //TODO notify server not good
 
                 break;
             case SmsManager.RESULT_ERROR_NO_SERVICE:
-                Log.e(Config.getProperties().getProperty("logger"), "SMS Sending Error :No service");
+                Logger.error(Config.getProperties().getProperty("logger"), "SMS Sending Error :No service");
                 //TODO notify server not good
 
                 break;
             case SmsManager.RESULT_ERROR_NULL_PDU:
-                Log.e(Config.getProperties().getProperty("logger"), "SMS Sending Error :Null PDU");
+                Logger.error(Config.getProperties().getProperty("logger"), "SMS Sending Error :Null PDU");
                 //TODO notify server not good
 
                 break;
             case SmsManager.RESULT_ERROR_RADIO_OFF:
-                Log.e(Config.getProperties().getProperty("logger"), "SMS Sending Error :Radio off");
+                Logger.error(Config.getProperties().getProperty("logger"), "SMS Sending Error :Radio off");
                 //TODO notify server not good
 
                 break;

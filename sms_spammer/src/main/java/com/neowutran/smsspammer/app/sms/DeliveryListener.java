@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.neowutran.smsspammer.app.Logger;
 import com.neowutran.smsspammer.app.config.Config;
 
 public class DeliveryListener extends BroadcastReceiver {
@@ -27,11 +27,11 @@ public class DeliveryListener extends BroadcastReceiver {
 
         switch (getResultCode()) {
             case Activity.RESULT_OK:
-                Log.i(Config.getProperties().getProperty("logger"), "SMS delivered");
+                Logger.debug(Config.getProperties().getProperty("logger"), "SMS delivered");
                 //TODO notify server good
                 break;
             case Activity.RESULT_CANCELED:
-                Log.e(Config.getProperties().getProperty("logger"), "SMS not delivered");
+                Logger.error(Config.getProperties().getProperty("logger"), "SMS not delivered");
                 //TODO notify server not good
                 break;
         }

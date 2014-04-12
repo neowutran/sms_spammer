@@ -10,7 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.SmsManager;
 import com.neowutran.smsspammer.app.config.Config;
-import com.neowutran.smsspammer.app.server.Data_Stub;
+import com.neowutran.smsspammer.app.server.ServerConnexion;
 import com.neowutran.smsspammer.app.sms.DeliveryListener;
 import com.neowutran.smsspammer.app.sms.SentListener;
 
@@ -49,8 +49,38 @@ public class Daemon extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (running) {
-            Map sms = Data_Stub.getSms();
-            sendSMS((String) sms.get("recipient"), (String) sms.get("message"), (String) sms.get("id"));
+            ServerConnexion readSms =  new ServerConnexion();
+
+            readSms.start();
+
+            try {
+                readSms.join();
+            } catch (InterruptedException e) {
+                Logger.error(Config.LOGGER, e.getMessage());
+            }
+
+            if(readSms.getListSms() != null) {
+                for (Map sms : readSms.getListSms()) {
+                    String recipient;
+                    String message;
+                    String id;
+                    try {
+                        recipient = (String) sms.get("recipient");
+                        message = (String) sms.get("message");
+                        id = (String) sms.get("id");
+                    }catch(RuntimeException e){
+                        readSms.setStatus(Config.getProperties().getProperty("wrong_data"));
+                        return Service.START_NOT_STICKY;
+                    }
+
+                    sendSMS(recipient, message, id);
+                }
+            }
+
+            Intent uiIntent = new Intent(this, DaemonManager.UIReceiver.class);
+            uiIntent.putExtra("status", readSms.getStatus());
+            this.startService(uiIntent);
+
         }
         return Service.START_NOT_STICKY;
     }
@@ -90,5 +120,6 @@ public class Daemon extends Service {
             return Daemon.this;
         }
     }
+
 
 }
