@@ -22,7 +22,10 @@ import java.util.Scanner;
 /**
  * Created by draragar on 4/12/14.
  */
-public class ServerConnection extends Thread{
+public class ServerConnection extends Thread {
+
+    private static String status;
+    private List<Map> listSms = new ArrayList<>();
 
     public List<Map> getListSms() {
         return listSms;
@@ -36,25 +39,8 @@ public class ServerConnection extends Thread{
         ServerConnection.status = status;
     }
 
-    private static String status;
-
-    public void acceptAllTheFuckingSSLCertificate() throws KeyManagementException, NoSuchAlgorithmException {
-        //!!! This is a motherfucking dirty shitty hack to accept ssl certificate self signed.
-        //!!! It will be easy for an attacker to exploit this shit.
-        //!!! But I don't know good thing to accept self signed certificate.
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[] {
-                new X509TrustManager() {
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[]{}; }
-                }
-        }, null);
-        HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
-    }
-
     @Override
-    public void run(){
+    public void run() {
         try {
             acceptAllTheFuckingSSLCertificate();
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
@@ -63,11 +49,30 @@ public class ServerConnection extends Thread{
         getSms();
     }
 
-    private List<Map> listSms = new ArrayList<>();
+    public void acceptAllTheFuckingSSLCertificate() throws KeyManagementException, NoSuchAlgorithmException {
+        //!!! This is a motherfucking dirty shitty hack to accept ssl certificate self signed.
+        //!!! It will be easy for an attacker to exploit this shit.
+        //!!! But I don't know good thing to accept self signed certificate.
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        ctx.init(null, new TrustManager[]{
+                new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                    }
 
-    public void getSms(){
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[]{};
+                    }
+                }
+        }, null);
+        HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
+    }
+
+    public void getSms() {
         this.listSms = new ArrayList<>();
-        setStatus(Config.getProperties().getProperty("api_ok"));
+        setStatus(Config.getProperties().getProperty(Status.OK));
         String json = "";
 
         try {
@@ -78,7 +83,7 @@ public class ServerConnection extends Thread{
             }
 
         } catch (IOException e) {
-            status = Config.getProperties().getProperty("cannot_connect");
+            status = Config.getProperties().getProperty(Status.CANNOT_CONNECT);
             Logger.error(Config.LOGGER, "wrong url:" + e.getMessage());
             return;
         }
@@ -89,8 +94,8 @@ public class ServerConnection extends Thread{
         try {
             this.listSms = gson.fromJson(json, new TypeToken<List<Map>>() {
             }.getType());
-        }catch(RuntimeException e){
-            status = Config.getProperties().getProperty("wrong_data");
+        } catch (RuntimeException e) {
+            status = Config.getProperties().getProperty(Status.WRONG_DATA);
         }
     }
 

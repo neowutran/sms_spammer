@@ -41,24 +41,23 @@ public class Config {
 
     }
 
-    public static void setAPIUrl(String newApiUrl){
-        Logger.debug(Config.LOGGER, "new api url: "+newApiUrl);
+    public static String getAPIUrl() {
+        return preferences.getString("api_url", (String) properties.get("api_url"));
+    }
+
+    public static void setAPIUrl(String newApiUrl) {
+        Logger.debug(Config.LOGGER, "new api url: " + newApiUrl);
         editor.putString("api_url", newApiUrl);
         editor.commit();
     }
 
-    public static String getAPIUrl()
-    {
-        return preferences.getString("api_url", (String)properties.get("api_url"));
-    }
-
-    public static String getMinuteBetweenCheck(){
-        return preferences.getString("minute_between_check", (String)properties.get("minute_between_check"));
+    public static String getMinuteBetweenCheck() {
+        return preferences.getString("minute_between_check", (String) properties.get("minute_between_check"));
     }
 
 
-    public static void setMinuteBetweenCheck(String minuteBetweenCheck){
-        Logger.debug(Config.LOGGER, "new update check: "+minuteBetweenCheck);
+    public static void setMinuteBetweenCheck(String minuteBetweenCheck) {
+        Logger.debug(Config.LOGGER, "new update check: " + minuteBetweenCheck);
         editor.putString("minute_between_check", minuteBetweenCheck);
         editor.commit();
     }

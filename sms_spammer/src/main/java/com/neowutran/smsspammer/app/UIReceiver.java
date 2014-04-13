@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 public class UIReceiver extends BroadcastReceiver {
 
-    public UIReceiver(){
+    public UIReceiver() {
 
     }
 
@@ -16,11 +16,11 @@ public class UIReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
 
         Bundle extras = intent.getExtras();
-        if(extras != null){
-            String status = (String)extras.get("status");
-            if(DaemonManager.getIsRunning()) {
+        if (extras != null) {
+            String status = (String) extras.get("status");
+            if (DaemonManager.getIsRunning()) {
                 ((TextView) DaemonManager.getInstance().findViewById(R.id.connectionStatus)).setText(status);
-            }else{
+            } else {
                 DaemonManager.setStatusWaiting(status);
             }
         }

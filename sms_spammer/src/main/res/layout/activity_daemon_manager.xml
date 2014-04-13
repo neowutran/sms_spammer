@@ -1,103 +1,174 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.neowutran.smsspammer.app.DaemonManager">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+ <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-    <ToggleButton
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Service statut"
-            android:id="@+id/toggleButton"
-            android:checked="true" android:clickable="true"
-            android:enabled="true" android:focusable="true"
-            android:layout_below="@+id/updateNow" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" android:layout_marginTop="52dp"
-            android:layout_alignParentRight="true" android:layout_alignParentEnd="true"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_below="@+id/textView" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/tableRow5"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Connection status:"
+                    android:id="@+id/textView3"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tableRow6"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Pending"
+                    android:id="@+id/connectionStatus"
+                    />
+
+            </LinearLayout>
+        <!-- 2 columns -->
+        <LinearLayout
+                android:id="@+id/tableRow1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip" >
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="sms api address"
+                    android:layout_weight="1"
+                    android:id="@+id/textView"/>
+
+        </LinearLayout>
+
+        <!-- edittext span 2 column -->
+        <LinearLayout
+                android:id="@+id/tableRow2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip" >
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/input_api_url"
+            />
+        </LinearLayout>
+
+
+
+
+    <LinearLayout  android:id="@+id/tableRow7"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="5dip">
+
+
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="sms api address"
-            android:id="@+id/textView"
-            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Daemon status"
-            android:id="@+id/textView2"
-            android:textAlignment="center"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/toggleButton" android:layout_alignTop="@+id/toggleButton"
-            android:layout_alignBottom="@+id/toggleButton"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Connection status:"
-            android:id="@+id/textView3"
-            android:layout_below="@+id/editText" android:layout_centerHorizontal="true"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Pending"
-            android:id="@+id/connectionStatus"
-            android:layout_below="@+id/textView3" android:layout_alignRight="@+id/editText"
-            android:layout_alignEnd="@+id/editText" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="update now"
-            android:id="@+id/updateNow"
-            android:layout_below="@+id/updateInterval" android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Update interval"
             android:id="@+id/textView4"
-            android:layout_below="@+id/connectionStatus" android:layout_alignLeft="@+id/textView"
-            android:layout_alignStart="@+id/textView"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/updateInterval"
-            android:layout_below="@+id/textView4" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="minutes"
-            android:id="@+id/textView5"
-            android:layout_alignBottom="@+id/updateInterval" android:layout_toRightOf="@+id/updateInterval"
-            android:layout_alignTop="@+id/updateInterval" android:layout_alignRight="@+id/connectionStatus"
-            android:layout_alignEnd="@+id/connectionStatus"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Daemon status"
-            android:id="@+id/textView6" android:layout_above="@+id/textView2"
-            android:layout_alignParentRight="true" android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true" android:layout_alignParentStart="true"/>
-</RelativeLayout>
+
+        android:textAlignment="center" />
+
+
+</LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tableRow8"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="5dip">
+
+            <EditText
+
+                    android:inputType="number"
+                    android:digits="0123456789"
+                    android:ems="5"
+                    android:id="@+id/updateInterval"
+                android:numeric="integer"
+                android:maxLength="5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+              />
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="minutes"
+                    android:id="@+id/textView5"
+                  />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/tableRow9"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="5dip">
+
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="update now"
+                    android:id="@+id/updateNow" />
+        </LinearLayout>
+
+
+        <!-- 3 columns -->
+        <LinearLayout
+                android:id="@+id/tableRow3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip" >
+
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Daemon status"
+                    android:id="@+id/textView2"
+                    android:textAlignment="center"
+               />
+
+
+        </LinearLayout>
+
+        <!-- display this button in 3rd column via layout_column(zero based) -->
+        <LinearLayout
+                android:id="@+id/tableRow4"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="5dip" >
+            <ToggleButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="Service statut"
+                    android:id="@+id/toggleButton"
+                    android:checked="true" android:clickable="true"
+                    android:enabled="true" android:focusable="true" />
+
+        </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
