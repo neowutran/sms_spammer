@@ -78,14 +78,9 @@ public class DaemonManager extends Activity {
             private String text = ((EditText) findViewById(R.id.updateInterval)).getText().toString();
 
             @Override
-            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
-
-            }
-
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
             @Override
-            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
-
-            }
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
 
             @Override
             public void afterTextChanged(final Editable editable) {
@@ -105,14 +100,9 @@ public class DaemonManager extends Activity {
             private String text = apiUrl.getText().toString();
 
             @Override
-            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
-
-            }
-
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
             @Override
-            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
-
-            }
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
 
             @Override
             public void afterTextChanged(final Editable editable) {
