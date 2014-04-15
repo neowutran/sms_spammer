@@ -5,32 +5,22 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
-import android.telephony.SmsManager;
-import com.neowutran.smsspammer.app.config.Config;
+import com.neowutran.smsspammer.app.data.Config;
 import com.neowutran.smsspammer.app.server.ServerConnection;
 import com.neowutran.smsspammer.app.server.Status;
-import com.neowutran.smsspammer.app.sms.DeliveryListener;
-import com.neowutran.smsspammer.app.sms.SentListener;
+import com.neowutran.smsspammer.app.sms.Sms;
 
 import java.util.Calendar;
 import java.util.Map;
 
-/**
- * Created by neowutran on 11/04/14.
- */
 public class Daemon extends Service {
     private static Boolean running = false;
     private final IBinder binder = new DaemonBinder();
 
     public static Boolean getRunning() {
         return running;
-    }
-
-    public static void setRunning(final Boolean running) {
-        Daemon.running = running;
     }
 
     @Override
@@ -48,15 +38,13 @@ public class Daemon extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (running) {
-            checkSMS();
-        }
+        Daemon.running = true;
+        addServerSMS();
         return Service.START_NOT_STICKY;
     }
 
-    private void checkSMS() {
+    private void addServerSMS() {
         ServerConnection readSms = new ServerConnection();
-
         readSms.start();
 
         try {
@@ -66,46 +54,34 @@ public class Daemon extends Service {
         }
 
         if (readSms.getListSms() != null) {
-            for (Map sms : readSms.getListSms()) {
+            for (Map mapSms : readSms.getListSms()) {
                 String recipient;
                 String message;
-                String id;
+                int id;
                 try {
-                    recipient = (String) sms.get("recipient");
-                    message = (String) sms.get("message");
-                    id = (String) sms.get("id");
+                    recipient = (String) mapSms.get("recipient");
+                    message = (String) mapSms.get("message");
+                    id = ((Double) mapSms.get("id")).intValue();
                 } catch (RuntimeException e) {
+                    Logger.error(Config.LOGGER, e.getMessage());
                     readSms.setStatus(Config.getProperties().getProperty(Status.WRONG_DATA));
                     return;
                 }
 
-                sendSMS(recipient, message, id);
+                Sms sms = new Sms(recipient, message, id);
+                Sms.addSms(sms);
+
             }
         }
+
 
         Intent notificationIntent = new Intent();
         notificationIntent.setAction("com.neowutran.smsspammer.app.Daemon");
         notificationIntent.putExtra("status", readSms.getStatus());
         this.sendBroadcast(notificationIntent);
-    }
 
-    private void sendSMS(String recipient, String message, String id) {
+        Sms.sendAll(this);
 
-        String SENT = "SMS_SENT";
-        String DELIVERED = "SMS_DELIVERED";
-
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(SENT), 0);
-        Intent deliveredIntent = new Intent(DELIVERED);
-        deliveredIntent.putExtra("id", id);
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(DELIVERED), 0);
-
-        //---when the SMS has been sent---
-        registerReceiver(SentListener.getInstance(), new IntentFilter(SENT));
-        //---when the SMS has been delivered---
-        registerReceiver(DeliveryListener.getInstance(), new IntentFilter(DELIVERED));
-        SmsManager.getDefault().sendTextMessage(recipient, null, message, sentPI, deliveredPI);
     }
 
     @Override
@@ -120,16 +96,13 @@ public class Daemon extends Service {
     }
 
     public class DaemonBinder extends Binder {
-        public Daemon getService() {
-            return Daemon.this;
-        }
 
         public void killDaemon() {
             Daemon.this.stopSelf();
         }
 
         public void checkSms() {
-            Daemon.this.checkSMS();
+            Daemon.this.addServerSMS();
         }
     }
 

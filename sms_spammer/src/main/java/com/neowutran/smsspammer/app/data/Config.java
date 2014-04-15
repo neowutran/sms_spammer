@@ -1,12 +1,17 @@
-package com.neowutran.smsspammer.app.config;
+package com.neowutran.smsspammer.app.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.neowutran.smsspammer.app.Logger;
+import com.neowutran.smsspammer.app.sms.Sms;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class Config {
@@ -62,5 +67,24 @@ public class Config {
         editor.commit();
     }
 
+    public static List<Sms> getSms() {
+        String sms = preferences.getString("sms", null);
+        Logger.debug(Config.LOGGER, "get sms" + sms);
+        Gson gson = new Gson();
+        List<Sms> listSms = gson.fromJson(sms, new TypeToken<List<Sms>>() {
+        }.getType());
+        if(listSms == null){
+            listSms = new ArrayList<>();
+        }
+        return listSms;
+    }
+
+    public static void setSms(List<Sms> sms) {
+        Logger.debug(Config.LOGGER, "put sms");
+        Gson gson = new Gson();
+        editor.putString("sms", gson.toJson(sms, new TypeToken<List<Sms>>() {
+        }.getType()));
+        editor.commit();
+    }
 
 }

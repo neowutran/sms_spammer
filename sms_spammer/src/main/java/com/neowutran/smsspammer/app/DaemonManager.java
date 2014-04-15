@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.neowutran.smsspammer.app.config.Config;
+import com.neowutran.smsspammer.app.data.Config;
 import com.neowutran.smsspammer.app.server.Status;
 
 
@@ -59,7 +59,13 @@ public class DaemonManager extends Activity {
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Daemon.setRunning(isChecked);
+                if (Daemon.getRunning() && !isChecked) {
+                    daemonBinder.killDaemon();
+                    return;
+                }
+                if (!Daemon.getRunning() && isChecked) {
+                    startDaemon();
+                }
             }
         });
 
@@ -78,9 +84,12 @@ public class DaemonManager extends Activity {
             private String text = ((EditText) findViewById(R.id.updateInterval)).getText().toString();
 
             @Override
-            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+            }
+
             @Override
-            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+            }
 
             @Override
             public void afterTextChanged(final Editable editable) {
@@ -100,9 +109,12 @@ public class DaemonManager extends Activity {
             private String text = apiUrl.getText().toString();
 
             @Override
-            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+            }
+
             @Override
-            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {}
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i2, final int i3) {
+            }
 
             @Override
             public void afterTextChanged(final Editable editable) {
@@ -125,13 +137,6 @@ public class DaemonManager extends Activity {
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         toggle.setChecked(Daemon.getRunning());
         updateStatus();
-    }
-
-    private void updateStatus() {
-        if (statusWaiting != null) {
-            ((TextView) findViewById(R.id.connectionStatus)).setText(statusWaiting);
-            statusWaiting = null;
-        }
     }
 
     @Override
@@ -163,6 +168,17 @@ public class DaemonManager extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateStatus() {
+        if (statusWaiting != null) {
+            ((TextView) findViewById(R.id.connectionStatus)).setText(statusWaiting);
+            statusWaiting = null;
+        }
+    }
+
+    private void startDaemon() {
+        startService(new Intent(this, Daemon.class));
     }
 
     private void restartDaemon() {

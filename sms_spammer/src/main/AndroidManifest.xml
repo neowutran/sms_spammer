@@ -31,11 +31,21 @@
             </intent-filter>
         </receiver>
 
-
-
         <receiver android:name="com.neowutran.smsspammer.app.UIReceiver" android:exported="false" >
             <intent-filter>
                 <action android:name="com.neowutran.smsspammer.app.Daemon" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.neowutran.smsspammer.app.sms.DeliveryListener" android:exported="false">
+            <intent-filter>
+                <action android:name="com.neowutran.smsspammer.app.sms.DELIVERED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.neowutran.smsspammer.app.sms.SentListener" android:exported="false">
+            <intent-filter>
+                <action android:name="com.neowutran.smsspammer.app.sms.SEND"/>
             </intent-filter>
         </receiver>
 
