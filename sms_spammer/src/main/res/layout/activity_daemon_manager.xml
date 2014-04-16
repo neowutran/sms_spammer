@@ -73,7 +73,23 @@
             />
         </LinearLayout>
 
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip"
+    >
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="fill_parent"
+        android:text="https:" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/https"
+        />
+
+    </LinearLayout>
 
 
     <LinearLayout  android:id="@+id/tableRow7"

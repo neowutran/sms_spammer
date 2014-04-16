@@ -7,5 +7,6 @@ public enum SmsSendStatus {
 
     SUCCESS,
     FAILURE,
+    SENT,
     PENDING
 }

@@ -17,6 +17,8 @@ import java.util.Properties;
 public class Config {
 
     public static final String LOGGER = "neowutran.smsspammer";
+    public static final String HTTP = "http://";
+    public static final String HTTPS = "https://";
     private static final String ERR_LOAD_CONFIG = "Unable to load the config file";
     private static final String CONFIG = "config.properties";
     private static Properties properties = null;
@@ -73,7 +75,7 @@ public class Config {
         Gson gson = new Gson();
         List<Sms> listSms = gson.fromJson(sms, new TypeToken<List<Sms>>() {
         }.getType());
-        if(listSms == null){
+        if (listSms == null) {
             listSms = new ArrayList<>();
         }
         return listSms;
@@ -87,4 +89,8 @@ public class Config {
         editor.commit();
     }
 
+    public static void resetApiUrl() {
+        editor.putString("api_url", (String) properties.get("api_url"));
+        editor.commit();
+    }
 }

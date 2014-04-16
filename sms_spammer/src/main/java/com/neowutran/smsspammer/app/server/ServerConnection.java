@@ -22,6 +22,7 @@ public class ServerConnection extends Thread {
     private static String status;
     private List<Map> listSms = new ArrayList<>();
 
+
     public List<Map> getListSms() {
         return listSms;
     }
@@ -48,7 +49,14 @@ public class ServerConnection extends Thread {
         request.setHeader("Accept", "application/json");
         HttpClient httpClient = HttpManager.getNewHttpClient();
         try {
-            request.setURI(new URI(Config.getAPIUrl()));
+            try {
+                request.setURI(new URI(Config.getAPIUrl()));
+            } catch (RuntimeException e) {
+                Logger.error(Config.LOGGER, "wrong url:" + e.getMessage());
+                Config.resetApiUrl();
+                request.setURI(new URI(Config.getAPIUrl()));
+            }
+            Logger.debug(Config.LOGGER, "url=" + Config.getAPIUrl());
             HttpResponse response = httpClient.execute(request);
             Scanner scanner = new Scanner(response.getEntity().getContent());
             while (scanner.hasNextLine()) {

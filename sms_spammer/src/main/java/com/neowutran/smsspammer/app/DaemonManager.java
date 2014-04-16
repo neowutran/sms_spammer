@@ -94,7 +94,6 @@ public class DaemonManager extends Activity {
             @Override
             public void afterTextChanged(final Editable editable) {
                 if (!editable.toString().equals(text)) {
-
                     Config.setMinuteBetweenCheck(editable.toString());
                     restartDaemon();
                     text = editable.toString();
@@ -121,9 +120,29 @@ public class DaemonManager extends Activity {
                 if (!editable.toString().equals(text)) {
                     TextView status = (TextView) findViewById(R.id.connectionStatus);
                     status.setText((String) Config.getProperties().get(Status.PENDING));
-                    Config.setAPIUrl(editable.toString());
+                    String protocole = Config.HTTP;
+                    if (((CheckBox) findViewById(R.id.https)).isChecked()) {
+                        protocole = Config.HTTPS;
+                    }
+                    Config.setAPIUrl(protocole + editable.toString());
                     text = editable.toString();
                 }
+            }
+        });
+
+        CheckBox checkBox = (CheckBox) findViewById(R.id.https);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                TextView status = (TextView) findViewById(R.id.connectionStatus);
+                status.setText((String) Config.getProperties().get(Status.PENDING));
+                String protocole = Config.HTTP;
+                if (isChecked) {
+                    protocole = Config.HTTPS;
+                }
+
+                Config.setAPIUrl(protocole + ((EditText) findViewById(R.id.input_api_url)).getText().toString());
+
             }
         });
 

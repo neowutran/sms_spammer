@@ -12,13 +12,13 @@ import java.util.List;
 
 public class Sms {
 
+    private static final String HEADER = "@NO-REPLY:\n";
     private static List<Sms> listSms = Config.getSms();
     private String recipient;
     private String message;
     private int id;
     private SmsSendStatus sendStatus = SmsSendStatus.PENDING;
     private SmsServerStatus serverStatus = SmsServerStatus.PENDING;
-    private static final String HEADER = "@NO-REPLY:\n";
 
     public Sms(String recipient, String message, int id) {
         this.recipient = recipient;
@@ -62,7 +62,7 @@ public class Sms {
 
     public static void sendAll(Context context) {
         for (Sms sms : listSms) {
-            if (!sms.sendStatus.equals(SmsSendStatus.SUCCESS)) {
+            if (!sms.sendStatus.equals(SmsSendStatus.SUCCESS) && !sms.sendStatus.equals(SmsSendStatus.SENT)) {
                 sms.send(context);
             }
         }

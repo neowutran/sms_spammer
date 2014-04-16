@@ -16,7 +16,6 @@ public class DeliveryListener extends BroadcastReceiver {
 
         Bundle bundle = intent.getExtras();
         int id = bundle.getInt("id");
-        Logger.error(Config.LOGGER,"id="+id);
         Sms sms = Sms.findSms(id);
 
         switch (getResultCode()) {
